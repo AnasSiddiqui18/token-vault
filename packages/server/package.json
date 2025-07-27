@@ -1,0 +1,30 @@
+{
+  "name": "@repo/server",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsx --watch src/index.ts"
+  },
+  "exports": {
+    "./contract/*": "./src/modules/users/*.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@orpc/client": "^1.7.4",
+    "@repo/database": "*",
+    "@orpc/openapi": "^1.7.4",
+    "@orpc/server": "^1.7.4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "cors": "^2.8.5",
+    "express": "^4.20.0",
+    "tsx": "^4.20.3",
+    "zod": "^4.0.8"
+  }
+}
