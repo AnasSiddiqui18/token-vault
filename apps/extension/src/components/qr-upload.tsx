@@ -1,16 +1,15 @@
-import { useDropzone } from 'react-dropzone';
-import { Button } from '@repo/ui/components/button';
-// import { Input } from '@/components/ui/input';
-import { BrowserQRCodeReader } from '@zxing/browser';
+import { useDropzone } from "react-dropzone";
+import { Button } from "@repo/ui/components/button";
+import { BrowserQRCodeReader } from "@zxing/browser";
 
 export function QrUpload() {
     const { getInputProps, getRootProps, open } = useDropzone({
         noClick: true,
         accept: {
-            'image/png': ['.png'],
-            'image/jpeg': ['.jpeg'],
-            'image/jpg': ['.jpg'],
-            'image/svg': ['.svg'],
+            "image/png": [".png"],
+            "image/jpeg": [".jpeg"],
+            "image/jpg": [".jpg"],
+            "image/svg": [".svg"],
         },
 
         onDrop: async (acceptedFiles) => {
@@ -22,19 +21,24 @@ export function QrUpload() {
             const text = resultImage.getText();
             const match = text.match(/secret=([^&]+)/);
             const secret = match ? match[1] : null;
-            console.log('secret', secret);
+            console.log("secret", secret);
 
             //  IFXWKK32JCVMDLDG
 
             //  ('otpauth://totp/GitHub:AnasSiddiqui18?secret=IFXWKK32JCVMDLDG&issuer=GitHub');
 
-            console.log('resultImage', resultImage);
+            console.log("resultImage", resultImage);
         },
     });
 
     return (
         <div {...getRootProps()}>
-            <Button variant="secondary" onClick={open} className="w-full">
+            <Button
+                variant="secondary"
+                onClick={open}
+                className="w-full"
+                size="sm"
+            >
                 Upload QR
             </Button>
             {/* <Input {...getInputProps()} /> */}

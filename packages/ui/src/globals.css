@@ -1,91 +1,96 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 @layer base {
-  :root,
-  .light {
-    --background: 223.8136 -172.5242% 100%;
-    --foreground: 223.8136 0% 3.9388%;
-    --card: 223.8136 -172.5242% 100%;
-    --card-foreground: 223.8136 0% 3.9388%;
-    --popover: 223.8136 -172.5242% 100%;
-    --popover-foreground: 223.8136 0% 3.9388%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 223.8136 0.0004% 98.0256%;
-    --secondary: 223.8136 0.0002% 96.0587%;
-    --secondary-foreground: 223.8136 0% 9.0527%;
-    --muted: 223.8136 0.0002% 96.0587%;
-    --muted-foreground: 223.8136 0% 45.1519%;
-    --accent: 223.8136 0.0002% 96.0587%;
-    --accent-foreground: 223.8136 0% 9.0527%;
-    --destructive: 351.7303 123.6748% 40.5257%;
-    --destructive-foreground: 223.8136 -172.5242% 100%;
-    --border: 223.8136 0.0001% 89.8161%;
-    --input: 223.8136 0.0001% 89.8161%;
-    --ring: 223.8136 0% 63.0163%;
-    --chart-1: 211.788 101.9718% 78.6759%;
-    --chart-2: 217.4076 91.3672% 59.5787%;
-    --chart-3: 221.4336 86.3731% 54.0624%;
-    --chart-4: 223.6587 78.718% 47.8635%;
-    --chart-5: 226.5426 70.0108% 39.9224%;
-    --radius: 0.6rem;
-    --sidebar: 223.8136 0.0004% 98.0256%;
-    --sidebar-foreground: 223.8136 0% 3.9388%;
-    --sidebar-primary: 223.8136 0% 9.0527%;
-    --sidebar-primary-foreground: 223.8136 0.0004% 98.0256%;
-    --sidebar-accent: 223.8136 0.0002% 96.0587%;
-    --sidebar-accent-foreground: 223.8136 0% 9.0527%;
-    --sidebar-border: 223.8136 0.0001% 89.8161%;
-    --sidebar-ring: 223.8136 0% 63.0163%;
-  }
+    :root,
+    .light {
+        --background: 223.8136 -172.5242% 100%;
+        --foreground: 223.8136 0% 3.9388%;
+        --card: 223.8136 -172.5242% 100%;
+        --card-foreground: 223.8136 0% 3.9388%;
+        --popover: 223.8136 -172.5242% 100%;
+        --popover-foreground: 223.8136 0% 3.9388%;
+        --primary: 217.2 91.2% 59.8%;
+        --primary-foreground: 223.8136 0.0004% 98.0256%;
+        --secondary: 223.8136 0.0002% 96.0587%;
+        --secondary-foreground: 223.8136 0% 9.0527%;
+        --muted: 223.8136 0.0002% 96.0587%;
+        --muted-foreground: 223.8136 0% 45.1519%;
+        --accent: 223.8136 0.0002% 96.0587%;
+        --accent-foreground: 223.8136 0% 9.0527%;
+        --destructive: 351.7303 123.6748% 40.5257%;
+        --destructive-foreground: 223.8136 -172.5242% 100%;
+        --border: 223.8136 0.0001% 89.8161%;
+        --input: 223.8136 0.0001% 89.8161%;
+        --ring: 223.8136 0% 63.0163%;
+        --chart-1: 211.788 101.9718% 78.6759%;
+        --chart-2: 217.4076 91.3672% 59.5787%;
+        --chart-3: 221.4336 86.3731% 54.0624%;
+        --chart-4: 223.6587 78.718% 47.8635%;
+        --chart-5: 226.5426 70.0108% 39.9224%;
+        --radius: 0.6rem;
+        --sidebar: 223.8136 0.0004% 98.0256%;
+        --sidebar-foreground: 223.8136 0% 3.9388%;
+        --sidebar-primary: 223.8136 0% 9.0527%;
+        --sidebar-primary-foreground: 223.8136 0.0004% 98.0256%;
+        --sidebar-accent: 223.8136 0.0002% 96.0587%;
+        --sidebar-accent-foreground: 223.8136 0% 9.0527%;
+        --sidebar-border: 223.8136 0.0001% 89.8161%;
+        --sidebar-ring: 223.8136 0% 63.0163%;
+    }
 
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 217.2 91.2% 59.8%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --radius: 0.6rem;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+    .dark {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 217.2 91.2% 59.8%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 217.2 91.2% 59.8%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        --radius: 0.6rem;
+        --sidebar-background: 240 5.9% 10%;
+        --sidebar-foreground: 240 4.8% 95.9%;
+        --sidebar-primary: 224.3 76.3% 48%;
+        --sidebar-primary-foreground: 0 0% 100%;
+        --sidebar-accent: 240 3.7% 15.9%;
+        --sidebar-accent-foreground: 240 4.8% 95.9%;
+        --sidebar-border: 240 3.7% 15.9%;
+        --sidebar-ring: 217.2 91.2% 59.8%;
+    }
 }
 
 @layer base {
-  .pretty-scrollbar::-webkit-scrollbar {
-    @apply h-1.5 w-1.5;
-  }
-  .pretty-scrollbar::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-black/15 bg-clip-content dark:bg-secondary;
-  }
+    .pretty-scrollbar::-webkit-scrollbar {
+        @apply h-1.5 w-1.5;
+    }
+    .pretty-scrollbar::-webkit-scrollbar-thumb {
+        @apply rounded-full bg-black/15 bg-clip-content dark:bg-secondary;
+    }
 }

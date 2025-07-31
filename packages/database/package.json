@@ -1,27 +1,27 @@
 {
-  "name": "@repo/database",
-  "version": "0.0.0",
-  "private": true,
-  "exports": {
-    "./*": "./src/*.ts"
-  },
-  "type": "module",
-  "scripts": {
-    "lint": "eslint . --max-warnings 0",
-    "generate:component": "turbo gen react-component",
-    "check-types": "tsc --noEmit",
-    "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
-  },
-  "devDependencies": {
-    "@types/pg": "^8.15.4",
-    "tsx": "^4.20.3"
-  },
-  "dependencies": {
-    "dotenv": "^17.2.1",
-    "drizzle-kit": "^0.30.0",
-    "drizzle-orm": "^0.44.3",
-    "pg": "^8.16.3"
-  }
+    "name": "@repo/database",
+    "version": "0.0.0",
+    "private": true,
+    "exports": {
+        "./*": "./src/*.ts"
+    },
+    "type": "module",
+    "scripts": {
+        "lint": "eslint . --max-warnings 0",
+        "generate:component": "turbo gen react-component",
+        "check-types": "tsc --noEmit",
+        "db:generate": "drizzle-kit generate",
+        "db:push": "drizzle-kit push",
+        "db:studio": "drizzle-kit studio"
+    },
+    "devDependencies": {
+        "@types/pg": "^8.15.4",
+        "tsx": "^4.20.3"
+    },
+    "dependencies": {
+        "dotenv": "^17.2.1",
+        "drizzle-kit": "^0.30.0",
+        "drizzle-orm": "^0.44.3",
+        "pg": "^8.16.3"
+    }
 }

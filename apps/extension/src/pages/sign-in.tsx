@@ -1,124 +1,151 @@
 import "@repo/ui/globals.css";
 import { Button } from "@repo/ui/components/button";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@repo/ui/components/form";
 import { Input } from "@repo/ui/components/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signin_schema } from "@/schema/schema";
 import { useNavigate } from "react-router";
-import { Coins } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { signin_schema } from "@/schema/schema";
+import { storage } from "@wxt-dev/storage";
+import { authClient } from "@/lib/auth-client";
 
 export default function SignIn() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const form = useForm({
-    resolver: zodResolver(signin_schema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+    const loginSchema = signin_schema;
 
-  function createUser() {}
+    const form = useForm({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
 
-  return (
-    <div className="h-full w-full flex flex-col justify-center rounded-lg shadow-md border text-muted-foreground bg-background p-6">
-      <Form {...form}>
-        <form
-          className="w-full h-full flex flex-col justify-between gap-6"
-          onSubmit={form.handleSubmit(createUser)}
-        >
-          <div className="text-center space-y-3">
-            <h1 className="text-2xl font-bold text-foreground flex gap-2 justify-center items-center">
-              <Coins className="size-8 text-orange-300" />
-              TokenVault
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Your trusted 2FA token manager.
-            </p>
-          </div>
+    const {
+        isPending: isUserLoggingIn,
+        mutate,
+        error,
+    } = useMutation({
+        mutationKey: ["login_user"],
+        mutationFn: async (e: (typeof loginSchema)["_input"]) => {
+            const response = await authClient.signIn.email({
+                email: e.email,
+                password: e.password,
+            });
 
-          <div className="text-center">
-            <h2 className="font-semibold text-2xl">Sign In</h2>
-          </div>
+            if (response.error) throw new Error(response.error.message);
+            return response.data;
+        },
 
-          <div className="flex flex-col gap-4">
-            <FormField
-              name="email"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-sm font-medium">Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="johndoe@gmail.com"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 w-full"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        onSuccess: async (res) => {
+            if (!res) return;
+            storage.setItem("session:token", res.token);
+            navigate("/dashboard");
+        },
+    });
 
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-sm font-medium">
-                    Password
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 w-full"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+    return (
+        <div className="h-full w-full flex flex-col justify-center rounded-lg shadow-md border text-muted-foreground bg-background p-6">
+            <Form {...form}>
+                <form
+                    className="w-full h-full flex flex-col justify-between gap-6"
+                    onSubmit={form.handleSubmit((val) => mutate(val))}
+                >
+                    <div className="text-center">
+                        <h2 className="font-semibold text-2xl">Sign In</h2>
+                    </div>
 
-          <div className="flex flex-col gap-4 mt-4">
-            <Button
-              type="submit"
-              className={`w-full bg-primary hover:bg-primary/90 transition-all duration-200 ${
-                false && "pointer-events-none opacity-40"
-              }`}
-            >
-              Sign In
-            </Button>
+                    <div className="flex flex-col gap-4">
+                        <FormField
+                            name="email"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel className="text-sm font-medium">
+                                        Email
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="email"
+                                            placeholder="johndoe@gmail.com"
+                                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 w-full"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-            <div className="flex items-center gap-2 justify-center">
-              <div className="h-[1px] bg-gray-200 w-24" />
-              <span className="text-sm text-muted-foreground">or</span>
-              <div className="h-[1px] bg-gray-200 w-24" />
-            </div>
+                        <FormField
+                            name="password"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel className="text-sm font-medium">
+                                        Password
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="password"
+                                            placeholder="••••••••"
+                                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 w-full"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
 
-            <div className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
-              <span
-                className="text-blue-500 hover:underline cursor-pointer"
-                onClick={() => navigate("/sign-up")}
-              >
-                Sign Up
-              </span>
-            </div>
-          </div>
-        </form>
-      </Form>
-    </div>
-  );
+                    <div className="flex flex-col gap-4 mt-4">
+                        <Button
+                            type="submit"
+                            disabled={isUserLoggingIn}
+                            loading={isUserLoggingIn}
+                            className={`w-full bg-primary hover:bg-primary/90 transition-all duration-200 ${
+                                false && "pointer-events-none opacity-40"
+                            }`}
+                        >
+                            Sign In
+                        </Button>
+
+                        {error && (
+                            <div className="bg-red-500/10 text-red-600 text-sm rounded-md px-4 py-2 mt-2 text-center">
+                                {error.message}
+                            </div>
+                        )}
+
+                        <div className="flex items-center gap-2 justify-center">
+                            <div className="h-[1px] bg-gray-200 w-24" />
+                            <span className="text-sm text-muted-foreground">
+                                or
+                            </span>
+                            <div className="h-[1px] bg-gray-200 w-24" />
+                        </div>
+
+                        <div className="text-center text-sm text-muted-foreground">
+                            Don&apos;t have an account?{" "}
+                            <span
+                                className="text-blue-500 hover:underline cursor-pointer"
+                                onClick={() => navigate("/sign-up")}
+                            >
+                                Sign Up
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </Form>
+        </div>
+    );
 }
