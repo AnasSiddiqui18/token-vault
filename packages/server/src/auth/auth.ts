@@ -8,9 +8,7 @@ export const auth = betterAuth({
         provider: "pg",
         schema,
     }),
-
     trustedOrigins: ["chrome-extension://lkjdanigodcdlahamhjchakefdlpkjak"],
-
     emailAndPassword: {
         enabled: true,
     },

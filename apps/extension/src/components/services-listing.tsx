@@ -1,89 +1,57 @@
 import { orpcQueryClient } from "@/orpc/orpc";
-import { Input } from "@repo/ui/components/input";
-import { Label } from "@repo/ui/components/label";
 import { useQuery } from "@tanstack/react-query";
-import { LoaderCircle } from "lucide-react";
+import { File, LoaderCircle } from "lucide-react";
+import { ServiceCard } from "./service-card";
+import CircularTimer from "./circular-timer";
 
 export function ServiceListing() {
-    const { data, isPending, error } = useQuery(
-        orpcQueryClient.service.list.queryOptions(),
+    const {
+        data: services,
+        isPending,
+        error,
+        refetch,
+    } = useQuery(
+        orpcQueryClient.service.list.queryOptions({
+            queryKey: ["list_services"],
+            refetchOnWindowFocus: false,
+        }),
     );
-
-    const services = [
-        {
-            id: "srv_001",
-            label: "GitHub",
-            createdAt: "2025-07-30T12:45:00Z",
-            provider: "GitHub",
-        },
-        {
-            id: "srv_002",
-            label: "AWS",
-            createdAt: "2025-07-29T09:20:00Z",
-            provider: "Amazon",
-        },
-        {
-            id: "srv_003",
-            label: "Notion",
-            createdAt: "2025-07-28T16:10:00Z",
-            provider: "Notion",
-        },
-        {
-            id: "srv_004",
-            label: "Vercel",
-            createdAt: "2025-07-25T14:00:00Z",
-            provider: "Vercel",
-        },
-        {
-            id: "srv_005",
-            label: "DigitalOcean",
-            createdAt: "2025-07-22T08:30:00Z",
-            provider: "DigitalOcean",
-        },
-        {
-            id: "srv_004",
-            label: "Vercel",
-            createdAt: "2025-07-25T14:00:00Z",
-            provider: "Vercel",
-        },
-        {
-            id: "srv_005",
-            label: "DigitalOcean",
-            createdAt: "2025-07-22T08:30:00Z",
-            provider: "DigitalOcean",
-        },
-    ];
-
-    if (isPending) {
-        return (
-            <div className="text-sm text-center text-muted-foreground py-6">
-                <LoaderCircle className="animate-spin mx-auto mb-2" />
-                Loading services...
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="text-sm text-center text-destructive py-6">
-                Failed to load services.
-            </div>
-        );
-    }
 
     return (
         <div className="flex flex-col space-y-4 w-full max-w-md h-[450px] overflow-y-auto pretty-scrollbar py-2">
-            {services.map((service) => (
-                <div
-                    key={service.id}
-                    className="flex flex-col space-y-1 bg-muted/20 p-3 rounded-md"
-                >
-                    <Label className="text-sm font-medium text-muted-foreground">
-                        {service.label}
-                    </Label>
-                    <Input readOnly value={`••••••••••`} />
+            <div className="flex justify-between items-center">
+                <h2 className="font-bold text-xl">Services</h2>
+                <CircularTimer refetch={refetch} size={40} />
+            </div>
+
+            {isPending ? (
+                <div className="flex flex-col items-center space-y-4 py-10">
+                    <LoaderCircle className="size-8 text-primary animate-spin" />
+                    <span className="text-muted-foreground">
+                        Loading services...
+                    </span>
                 </div>
-            ))}
+            ) : error ? (
+                <div className="flex flex-col items-center space-y-4 py-10">
+                    <File className="size-10 text-destructive" />
+                    <span className="text-destructive">
+                        {error.message || "Something went wrong"}
+                    </span>
+                </div>
+            ) : services.length > 0 ? (
+                services.map((service) => (
+                    <div className="space-y-5" key={service.id}>
+                        <ServiceCard data={service} refetch={refetch} />
+                    </div>
+                ))
+            ) : (
+                <div className="flex flex-col items-center space-y-4 py-10">
+                    <File className="size-10 text-primary" />
+                    <span className="text-muted-foreground text-center">
+                        No services found.
+                    </span>
+                </div>
+            )}
         </div>
     );
 }

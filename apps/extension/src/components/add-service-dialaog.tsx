@@ -25,7 +25,7 @@ import { useDropzone } from "react-dropzone";
 import { BrowserQRCodeReader } from "@zxing/browser";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 function sliceFileName(file_name: string) {
     return file_name.replace(/^(.{8})[^.]*\.(.*)$/, "$1.$2");
@@ -77,6 +77,7 @@ export function AddServiceDialog() {
     });
 
     const { getSession } = authClient;
+    const cache = useQueryClient();
 
     const {
         error,
@@ -86,8 +87,6 @@ export function AddServiceDialog() {
         mutationKey: ["add_service"],
         mutationFn: async (values: (typeof schema)["_input"]) => {
             const { data, error } = await getSession();
-
-            console.log("function calls");
 
             if (error || !data) {
                 toast.error("Session not found");
@@ -117,6 +116,9 @@ export function AddServiceDialog() {
         onSuccess: () => {
             setIsServiceDialogOpen(false);
             form.reset();
+            cache.invalidateQueries({
+                queryKey: ["list_services"],
+            });
         },
     });
 

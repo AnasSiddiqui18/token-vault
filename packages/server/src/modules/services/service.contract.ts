@@ -6,15 +6,25 @@ const serviceInputSchema = z.object({
     secret: z.string(),
 });
 
+const serviceOutputSchema = z.array(
+    z.object({
+        label: z.string(),
+        token: z.string(),
+        id: z.string(),
+    }),
+);
+
 export const createService = oc.input(serviceInputSchema).route({
     path: "/service/create-service",
     method: "POST",
 });
 
-export const listServices = oc.route({
-    path: "/service/list-service",
-    method: "POST",
-});
+export const listServices = oc
+    .route({
+        path: "/service/list-service",
+        method: "POST",
+    })
+    .output(serviceOutputSchema);
 
 export const serviceContract = oc.router({
     create: createService,

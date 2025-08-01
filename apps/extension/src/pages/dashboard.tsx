@@ -1,4 +1,3 @@
-import { QrUpload } from "@/components/qr-upload";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@repo/ui/components/button";
 import { Coins } from "lucide-react";
