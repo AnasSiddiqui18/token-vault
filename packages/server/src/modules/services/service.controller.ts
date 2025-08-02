@@ -1,22 +1,22 @@
 import { implement, ORPCError } from "@orpc/server";
-import { serviceContract } from "./service.contract";
+import { serviceContract } from "@/modules/services/service.contract";
 import { db } from "@repo/database/index";
 import { service } from "@repo/database/db/schema";
-import type { auth } from "@/auth/auth";
 import { generateTokenFromSecret } from "@/helpers/generate-token-from-secret";
 import { redis } from "@/upstash/upstash";
 import { fetchServiceFromDB } from "@/helpers/fetch-services.from-db";
+import type { Session, User } from "@/types/index";
 
 export const serviceRouter = implement(serviceContract)
     .$context<{
-        user: typeof auth.$Infer.Session.user;
-        session: typeof auth.$Infer.Session.session;
+        user: User;
+        session: Session;
     }>()
     .router({
         create: implement(serviceContract.create)
             .$context<{
-                user: typeof auth.$Infer.Session.user;
-                session: typeof auth.$Infer.Session.session;
+                user: User;
+                session: Session;
             }>()
             .handler(async ({ input, context }) => {
                 try {
@@ -45,8 +45,8 @@ export const serviceRouter = implement(serviceContract)
 
         list: implement(serviceContract.list)
             .$context<{
-                user: typeof auth.$Infer.Session.user;
-                session: typeof auth.$Infer.Session.session;
+                user: User;
+                session: Session;
             }>()
             .handler(async ({ context }) => {
                 try {

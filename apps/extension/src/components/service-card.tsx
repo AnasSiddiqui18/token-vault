@@ -2,23 +2,12 @@ import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { Check, ClipboardList } from "lucide-react";
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 
 type ServiceCardProps = {
     data: { label: string; token: string };
-    refetch: (options?: RefetchOptions) => Promise<
-        QueryObserverResult<
-            {
-                label: string;
-                token: string;
-                id: string;
-            }[],
-            Error
-        >
-    >;
 };
 
-export function ServiceCard({ data, refetch }: ServiceCardProps) {
+export function ServiceCard({ data }: ServiceCardProps) {
     const [copied, setCopied] = useState(false);
     const { label, token } = data;
 
@@ -32,7 +21,7 @@ export function ServiceCard({ data, refetch }: ServiceCardProps) {
 
     return (
         <div className="relative flex flex-col space-y-1 bg-muted/20 p-3 rounded-md">
-            <Label className="text-sm font-medium text-muted-foreground flex justify-between pr-8">
+            <Label className="text-sm font-medium text-muted-foreground flex justify-between">
                 {label}
                 <Button
                     size="icon"

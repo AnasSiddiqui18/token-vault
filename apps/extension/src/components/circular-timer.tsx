@@ -6,13 +6,12 @@ import { useState, useEffect, useRef } from "react";
 interface CircularTimerProps {
     duration?: number;
     size?: number;
-    refetch: (options?: RefetchOptions) => Promise<
+    enable: boolean;
+    refetch: (
+        options?: RefetchOptions,
+    ) => Promise<
         QueryObserverResult<
-            {
-                label: string;
-                token: string;
-                id: string;
-            }[],
+            { label: string; token: string; id: string }[],
             Error
         >
     >;
@@ -21,6 +20,7 @@ interface CircularTimerProps {
 export default function CircularTimer({
     duration = 30,
     size = 80,
+    enable,
     refetch,
 }: CircularTimerProps) {
     const [timeLeft, setTimeLeft] = useState(duration);
@@ -31,6 +31,8 @@ export default function CircularTimer({
     const circumference = 2 * Math.PI * radius;
 
     useEffect(() => {
+        if (!enable) return;
+
         intervalRef.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
@@ -44,7 +46,7 @@ export default function CircularTimer({
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
         };
-    }, [duration]);
+    }, [duration, enable]);
 
     const progressOffset =
         circumference - (timeLeft / duration) * circumference;

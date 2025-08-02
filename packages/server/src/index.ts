@@ -1,15 +1,16 @@
-import { router } from "./router";
+import { router } from "@/router";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { Hono } from "hono";
 import { ORPCError } from "@orpc/client";
 import { serve } from "@hono/node-server";
-import { auth } from "./auth/auth";
+import { auth } from "@/auth/auth";
+import type { Session, User } from "@/types/index";
 
 const PORT = 3001;
 const app = new Hono<{
     Variables: {
-        user: typeof auth.$Infer.Session.user | null;
-        session: typeof auth.$Infer.Session.session | null;
+        user: User | null;
+        session: Session | null;
     };
 }>();
 
