@@ -4,7 +4,12 @@
     "type": "module",
     "private": true,
     "scripts": {
-        "dev": "tsx --watch src/index.ts"
+        "dev": "tsx --watch src/index.ts",
+        "build": "tsdown -d ./dist",
+        "lint": "tsc --noEmit",
+        "check-types": "tsc -b",
+        "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+        "start": "node dist/index.js"
     },
     "exports": {
         "./contracts": "./src/contracts.ts"

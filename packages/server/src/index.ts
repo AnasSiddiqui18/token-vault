@@ -1,10 +1,10 @@
-import { router } from "@/router";
+import { router } from "./router";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { Hono } from "hono";
 import { ORPCError } from "@orpc/client";
 import { serve } from "@hono/node-server";
-import { auth } from "@/auth/auth";
-import type { Session, User } from "@/types/index";
+import { auth } from "./auth/auth";
+import type { Session, User } from "./types/index";
 
 const PORT = 3001;
 const app = new Hono<{
@@ -34,6 +34,10 @@ app.use("*", async (c, next) => {
 
 app.on(["POST", "GET"], "/api/auth/*", (c) => {
     return auth.handler(c.req.raw);
+});
+
+app.get("/", (c) => {
+    return c.json({ status: "working" });
 });
 
 app.use("/api/*", async (c) => {
