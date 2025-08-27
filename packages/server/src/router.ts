@@ -1,13 +1,14 @@
 import { implement } from "@orpc/server";
 import { contract } from "@/contracts";
 import { serviceRouter } from "@/modules/services/service.controller";
-import { auth } from "./auth/auth";
+import type { InitialContext } from "./types";
+import { loggerMiddleware } from "./middlewares/logger.middleware";
 
 export const router = implement(contract)
     .$context<{
-        user: typeof auth.$Infer.Session.user;
-        session: typeof auth.$Infer.Session.session;
+        req: Request;
     }>()
+    .use(loggerMiddleware)
     .router({
         service: serviceRouter,
     });

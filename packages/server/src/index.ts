@@ -30,7 +30,7 @@ app.use("*", async (c, next) => {
     return next();
 });
 
-app.on(["POST", "GET"], "/api/auth/*", (c) => {
+app.use("/api/auth/*", (c) => {
     return auth.handler(c.req.raw);
 });
 
@@ -42,8 +42,8 @@ app.use("/api/*", async (c) => {
     const { response } = await handler.handle(c.req.raw, {
         prefix: "/api",
         context: {
-            session: c.get("session")!,
-            user: c.get("user")!,
+            req: c.req.raw,
+            
         },
     });
 
