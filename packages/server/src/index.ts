@@ -2,11 +2,9 @@ import { router } from "./router";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { Hono } from "hono";
 import { ORPCError } from "@orpc/client";
-import { serve } from "@hono/node-server";
 import { auth } from "./auth/auth";
 import type { Session, User } from "./types/index";
 
-const PORT = 3001;
 const app = new Hono<{
     Variables: {
         user: User | null;
@@ -63,6 +61,4 @@ app.use("/api/*", async (c) => {
     return response;
 });
 
-serve({ fetch: app.fetch, port: PORT }, (info) => {
-    console.log(`Server is running at port ${info.port}`);
-});
+export default app;
