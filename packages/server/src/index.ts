@@ -37,7 +37,7 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 });
 
 app.get("/", (c) => {
-    return c.json({ status: "working" });
+    return c.json({ status: "Server is working" });
 });
 
 app.use("/api/*", async (c) => {

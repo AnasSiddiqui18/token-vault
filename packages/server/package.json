@@ -4,7 +4,8 @@
     "type": "module",
     "private": true,
     "scripts": {
-        "dev": "tsx --watch src/index.ts",
+        "dev": "wrangler dev",
+        "deploy": "wrangler deploy",
         "build": "tsdown -d ./dist",
         "lint": "tsc --noEmit",
         "check-types": "tsc -b",
@@ -25,8 +26,6 @@
         "@orpc/client": "^1.7.4",
         "@orpc/openapi": "^1.7.4",
         "@orpc/server": "^1.7.4",
-        "@repo/database": "*",
-        "@repo/shared": "*",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.3",
         "@upstash/redis": "^1.35.3",
@@ -38,5 +37,9 @@
         "otplib": "^12.0.1",
         "tsx": "^4.20.3",
         "zod": "^3.25.74"
+    },
+    "devdependencies": {
+        "@repo/database": "*",
+        "@repo/shared": "*"
     }
 }
