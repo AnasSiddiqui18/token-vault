@@ -1,14 +1,12 @@
 import { implement } from "@orpc/server";
 import { contract } from "@/contracts";
 import { serviceRouter } from "@/modules/services/service.controller";
-import type { InitialContext } from "./types";
 import { loggerMiddleware } from "./middlewares/logger.middleware";
+import type { Env } from "./index";
+import { getRedis } from "./middlewares/get-redis";
 
 export const router = implement(contract)
-    .$context<{
-        req: Request;
-    }>()
+    .$context<{ req: Request; env: Env }>()
     .use(loggerMiddleware)
-    .router({
-        service: serviceRouter,
-    });
+    .use(getRedis)
+    .router({ service: serviceRouter });

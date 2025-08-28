@@ -5,7 +5,15 @@ import { ORPCError } from "@orpc/client";
 import { auth } from "./auth/auth";
 import type { Session, User } from "./types/index";
 
+export type Env = {
+    UPSTASH_REDIS_REST_URL: string;
+    UPSTASH_REDIS_REST_TOKEN: string;
+    POSTGRES_URL: string;
+    BETTER_AUTH_SECRET: string;
+};
+
 const app = new Hono<{
+    Bindings: Env;
     Variables: {
         user: User | null;
         session: Session | null;
@@ -35,6 +43,7 @@ app.use("/api/auth/*", (c) => {
 });
 
 app.get("/", (c) => {
+    console.log("env", { ...c.env });
     return c.json({ status: "Server is working" });
 });
 
@@ -43,7 +52,7 @@ app.use("/api/*", async (c) => {
         prefix: "/api",
         context: {
             req: c.req.raw,
-            
+            env: c.env,
         },
     });
 

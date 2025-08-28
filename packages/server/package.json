@@ -5,11 +5,11 @@
     "private": true,
     "scripts": {
         "dev": "wrangler dev",
+        "secret": "wrangler secret put",
         "deploy": "wrangler deploy",
-        "build": "tsdown -d ./dist",
         "lint": "tsc --noEmit",
         "check-types": "tsc -b",
-        "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+        "tail": "wrangler tail",
         "start": "node dist/index.js"
     },
     "exports": {
@@ -32,6 +32,7 @@
         "@upstash/redis": "^1.35.3",
         "argon2": "^0.43.1",
         "better-auth": "^1.3.4",
+        "cloudflare": "^4.5.0",
         "cors": "^2.8.5",
         "express": "^4.20.0",
         "hono": "^4.8.9",

@@ -7,19 +7,21 @@ const logger = pino({
     },
 });
 
-export const loggerMiddleware = os.middleware(async ({ next, context }) => {
-    try {
-        return await next({
-            context: {
-                ...context,
-                console: logger,
-            },
-        });
-    } catch (error) {
-        if (!(error instanceof ORPCError)) {
-            console.error(error);
-        }
+export const loggerMiddleware = os
+    .$context<{ req: Request }>()
+    .middleware(async ({ next, context }) => {
+        try {
+            return await next({
+                context: {
+                    ...context,
+                    console: logger,
+                },
+            });
+        } catch (error) {
+            if (!(error instanceof ORPCError)) {
+                console.error(error);
+            }
 
-        throw error;
-    }
-});
+            throw error;
+        }
+    });

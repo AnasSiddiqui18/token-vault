@@ -3,7 +3,6 @@ import { serviceContract } from "@/modules/services/service.contract";
 import { db } from "@repo/database/index";
 import { service } from "@repo/database/db/schema";
 import { generateTokenFromSecret } from "@/helpers/generate-token-from-secret";
-import { redis } from "@/upstash/upstash";
 import { fetchServiceFromDB } from "@/helpers/fetch-services.from-db";
 import type { ContextWithUser, InitialContext } from "@/types";
 import { authMiddleware } from "@/middlewares/auth.middleware";
@@ -11,12 +10,14 @@ import { authMiddleware } from "@/middlewares/auth.middleware";
 const os = implement(serviceContract).$context<ContextWithUser>();
 
 export const serviceRouter = implement(serviceContract)
+    // over here we are receiving the req and the console which is being returned from the authMiddleware
     .$context<InitialContext>()
     .use(authMiddleware)
     .router({
         create: os.create.handler(async ({ input, context }) => {
             try {
-                const userId = context.user.id;
+                const { user, redis } = context;
+                const userId = user.id;
                 const data = { ...input, userId };
 
                 const [response] = await db
@@ -41,7 +42,7 @@ export const serviceRouter = implement(serviceContract)
 
         list: os.list.handler(async ({ context }) => {
             try {
-                const { user } = context;
+                const { user, redis } = context;
 
                 // getting service ids
 
