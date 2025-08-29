@@ -1,8 +1,8 @@
+import type { db } from "@/types/index";
 import { service } from "@repo/database/db/schema";
 import { desc, eq } from "@repo/database/exports";
-import { db } from "@repo/database/index";
 
-export async function fetchServiceFromDB(user_id: string) {
+export async function fetchServiceFromDB(user_id: string, db: db) {
     try {
         const services = await db.query.service.findMany({
             where: eq(service.userId, user_id),

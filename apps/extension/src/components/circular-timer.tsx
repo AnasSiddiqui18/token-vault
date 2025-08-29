@@ -7,7 +7,7 @@ interface CircularTimerProps {
     duration?: number;
     size?: number;
     enable: boolean;
-    refetch: (
+    refetch?: (
         options?: RefetchOptions,
     ) => Promise<
         QueryObserverResult<

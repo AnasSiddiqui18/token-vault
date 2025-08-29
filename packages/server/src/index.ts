@@ -2,15 +2,9 @@ import { router } from "./router";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { Hono } from "hono";
 import { ORPCError } from "@orpc/client";
-import { auth } from "./auth/auth";
-import type { Session, User } from "./types/index";
-
-export type Env = {
-    UPSTASH_REDIS_REST_URL: string;
-    UPSTASH_REDIS_REST_TOKEN: string;
-    POSTGRES_URL: string;
-    BETTER_AUTH_SECRET: string;
-};
+import { _auth } from "./auth/auth";
+import type { Env, Session, User } from "./types/index";
+import { cors } from "hono/cors";
 
 const app = new Hono<{
     Bindings: Env;
@@ -22,28 +16,24 @@ const app = new Hono<{
 
 const handler = new OpenAPIHandler(router);
 
-app.use("*", async (c, next) => {
-    const session = await auth.api.getSession({
-        headers: c.req.raw.headers,
-    });
+app.use(
+    "*",
+    cors({
+        origin: "chrome-extension://pndhdgalmfifjidaboddbjepcjkmmaea",
+        allowHeaders: ["Content-Type", "Authorization"],
+        allowMethods: ["POST", "GET", "OPTIONS"],
+        exposeHeaders: ["Content-Length"],
+        maxAge: 600,
+        credentials: true,
+    }),
+);
 
-    if (!session) {
-        c.set("user", null);
-        c.set("session", null);
-        return next();
-    }
-
-    c.set("user", session.user);
-    c.set("session", session.session);
-    return next();
-});
-
-app.use("/api/auth/*", (c) => {
+app.on(["POST", "GET"], "/api/auth/*", (c) => {
+    const { auth } = _auth(c.env);
     return auth.handler(c.req.raw);
 });
 
 app.get("/", (c) => {
-    console.log("env", { ...c.env });
     return c.json({ status: "Server is working" });
 });
 
@@ -61,9 +51,7 @@ app.use("/api/*", async (c) => {
             new ORPCError("NOT_FOUND", {
                 message: "Endpoint not found",
             }),
-            {
-                status: 404,
-            },
+            { status: 404 },
         );
     }
 

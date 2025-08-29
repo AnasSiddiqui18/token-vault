@@ -14,6 +14,7 @@ import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { signup_schema } from "@/schema/schema";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 export default function SignUp() {
     const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function SignUp() {
             });
 
             if (response.error) throw new Error(response.error.message);
+            toast.success("Success");
         },
 
         onSuccess: () => {

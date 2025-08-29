@@ -1,9 +1,11 @@
-import { os } from "@orpc/server";
-import type { Env } from "..";
-import { createRedis } from "@/upstash/upstash";
+import type { Env } from "@/types/index";
 import type { Logger } from "pino";
+import "dotenv/config";
+import { os } from "@orpc/server";
+import { createRedis } from "@/upstash/upstash";
+import { _auth } from "@/auth/auth";
 
-export const getRedis = os
+export const initResources = os
     .$context<{
         env: Env;
         console: Logger;
@@ -12,5 +14,6 @@ export const getRedis = os
     .middleware(async ({ context, next }) => {
         const { env } = context;
         const redis = createRedis(env);
-        return next({ context: { ...context, redis } });
+        const { auth, db } = _auth(env);
+        return next({ context: { ...context, redis, db, auth } });
     });

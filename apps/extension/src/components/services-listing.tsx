@@ -21,11 +21,7 @@ export function ServiceListing() {
         <div className="flex flex-col space-y-4 w-full max-w-md h-[450px] overflow-y-auto pretty-scrollbar py-2">
             <div className="flex justify-between items-center">
                 <h2 className="font-bold text-xl">Services</h2>
-                <CircularTimer
-                    refetch={refetch}
-                    size={40}
-                    enable={!!services?.length}
-                />
+                <CircularTimer size={40} enable={!!services?.length} />
             </div>
 
             {isPending ? (

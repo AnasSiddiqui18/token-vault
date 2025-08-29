@@ -5,8 +5,14 @@ import { storage } from "@wxt-dev/storage";
 import { useNavigate } from "react-router";
 
 export function Dashboard() {
-    const { signOut } = authClient;
+    const { signOut, useSession } = authClient;
     const navigate = useNavigate();
+    const { data, error } = useSession();
+
+    useEffect(() => {
+        if (error) return console.log("session error", error);
+        console.log("session", data);
+    }, [data, error]);
 
     return (
         <div className="bg-background h-full text-muted-foreground rounded-lg p-4 overflow-hidden">
@@ -21,6 +27,9 @@ export function Dashboard() {
                         size="sm"
                         onClick={async () => {
                             const res = await signOut();
+
+                            console.log("signOut response", res);
+
                             if (res.data?.success) {
                                 await storage.removeItem("session:token");
                                 return navigate("/sign-in");
