@@ -1,4 +1,4 @@
-import { Redis } from "@upstash/redis";
+import { Redis } from "@upstash/redis/cloudflare";
 import "dotenv/config";
 import type { Env } from "@/types/index";
 

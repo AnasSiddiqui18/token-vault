@@ -37,6 +37,10 @@ app.get("/", (c) => {
     return c.json({ status: "Server is working" });
 });
 
+try {
+    await fetch("https://youtube.com");
+} catch (error) {}
+
 app.use("/api/*", async (c) => {
     const { response } = await handler.handle(c.req.raw, {
         prefix: "/api",

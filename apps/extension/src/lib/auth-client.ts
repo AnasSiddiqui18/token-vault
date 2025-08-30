@@ -8,4 +8,3 @@ export const authClient = createAuthClient({
         credentials: "include",
     },
 });
-

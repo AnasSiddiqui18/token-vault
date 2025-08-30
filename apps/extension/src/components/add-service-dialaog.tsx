@@ -116,9 +116,7 @@ export function AddServiceDialog() {
         onSuccess: () => {
             setIsServiceDialogOpen(false);
             form.reset();
-            cache.invalidateQueries({
-                queryKey: ["list_services"],
-            });
+            cache.invalidateQueries({ queryKey: ["list_services"] });
         },
     });
 

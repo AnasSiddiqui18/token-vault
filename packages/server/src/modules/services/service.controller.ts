@@ -3,45 +3,10 @@ import { serviceContract } from "@/modules/services/service.contract";
 import * as schema from "@repo/database/db/schema";
 import type { ContextWithUser, InitialContext } from "@/types/index";
 import { authMiddleware } from "@/middlewares/auth.middleware";
+import { fetchServiceFromDB } from "@/helpers/fetch-services.from-db";
+import { generateTokenFromSecret } from "@/helpers/generate-token-from-secret";
 
 const os = implement(serviceContract).$context<ContextWithUser>();
-
-const mockServices = [
-    {
-        id: "1f3c9f22-bf11-4d49-bb7c-6c47f8d8a001",
-        label: "AWS",
-        token: "AKIAIOSFODNN7EXAMPLE",
-    },
-    {
-        id: "2a5b0f88-cf13-4e61-bc6b-9a8f7d8b3002",
-        label: "Netflix",
-        token: "NF-SEC-29af72cdd17e3a9d",
-        user_id: "a82e1f55-4c90-4a4d-892d-13e8d9f20002",
-        created_at: "2025-01-12T08:45:00Z",
-        updated_at: "2025-08-15T09:25:00Z",
-    },
-    {
-        id: "3b9a7c55-af66-4a3f-bc31-7baf0e2f0003",
-        label: "Spotify",
-        token: "SPOT-KEY-87cfd12e98bc1234",
-        user_id: "c91a23a4-97d1-4a38-9c4f-34a5d9e90003",
-        created_at: "2025-03-04T14:10:00Z",
-        updated_at: "2025-08-20T12:11:00Z",
-    },
-    {
-        id: "4c6d88f1-9c55-4b6a-8c61-45fbe7a90004",
-        label: "Google Cloud",
-        token: "GCP-KEY-1298adbc2398efaa",
-        user_id: "d71b87e2-45c6-4a89-b8f2-9182f7a60004",
-        created_at: "2025-05-18T16:30:00Z",
-        updated_at: "2025-08-25T08:05:00Z",
-    },
-    {
-        id: "5d8f32aa-8a22-4e1a-98ab-18f92c7c0005",
-        label: "Slack",
-        token: "SLACK-TOKEN-9981dca92d",
-    },
-];
 
 export const serviceRouter = implement(serviceContract)
     .$context<InitialContext>()
@@ -49,7 +14,7 @@ export const serviceRouter = implement(serviceContract)
     .router({
         create: os.create.handler(async ({ input, context }) => {
             try {
-                const { user, db } = context;
+                const { user, db, redis } = context;
                 const userId = user.id;
                 const data = { ...input, userId };
 
@@ -57,6 +22,16 @@ export const serviceRouter = implement(serviceContract)
                     .insert(schema.service)
                     .values(data)
                     .returning();
+
+                await redis.set(
+                    `service-${service?.id}`,
+                    JSON.stringify(service),
+                );
+
+                return Response.json({
+                    success: true,
+                    message: "Service created",
+                });
             } catch (error) {
                 throw new ORPCError("INTERNAL_SERVER_ERROR", {
                     message: "Service creation failed",
@@ -66,12 +41,65 @@ export const serviceRouter = implement(serviceContract)
 
         list: os.list.handler(async ({ context }) => {
             try {
-                return mockServices;
+                const { user, redis, db } = context;
+
+                const is_record_present = await redis.keys("service-*");
+
+                if (!is_record_present.length) {
+                    console.log("redis database is empty");
+
+                    const services = await fetchServiceFromDB(user.id, db);
+
+                    console.log("services", services);
+
+                    services.map(
+                        async (service) =>
+                            await redis.set(
+                                `service-${service.id}`,
+                                JSON.stringify(service),
+                            ),
+                    );
+
+                    const record = services.map((res) => {
+                        const token = generateTokenFromSecret(res.secret);
+                        return {
+                            label: res.label,
+                            token,
+                            id: res.id,
+                        };
+                    });
+
+                    return record;
+                }
+
+                const response = is_record_present.map(async (key) => {
+                    const record = await redis.get(key);
+                    return record;
+                }) as Promise<{
+                    label: string;
+                    secret: string;
+                    id: string;
+                    created_at: string;
+                }>[];
+
+                const resolvedResponse = await Promise.all(response);
+
+                const record = resolvedResponse.map((res) => {
+                    const token = generateTokenFromSecret(res.secret);
+                    return {
+                        label: res.label,
+                        token,
+                        id: res.id,
+                        created_at: res.created_at,
+                    };
+                });
+
+                return record;
             } catch (error) {
-                console.log("catch runs");
+                console.log("failed to list", error);
 
                 throw new ORPCError("INTERNAL_SERVER_ERROR", {
-                    message: "Failed to sdsdsdsdsdsdlist services.",
+                    message: "Failed to list services.",
                 });
             }
         }),
