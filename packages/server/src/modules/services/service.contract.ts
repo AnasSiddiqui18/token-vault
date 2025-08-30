@@ -14,15 +14,18 @@ const serviceOutputSchema = z.array(
     }),
 );
 
-export const createService = oc.input(serviceInputSchema).route({
-    path: "/service/create-service",
-    method: "POST",
-});
+export const createService = oc
+    .input(serviceInputSchema)
+    .route({
+        path: "/service/create-service",
+        method: "POST",
+    })
+    .output(z.object({ message: z.string() }));
 
 export const listServices = oc
     .route({
         path: "/service/list-service",
-        method: "POST",
+        method: "GET",
     })
     .output(serviceOutputSchema);
 

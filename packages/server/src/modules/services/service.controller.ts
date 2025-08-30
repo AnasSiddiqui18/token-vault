@@ -1,12 +1,30 @@
 import { implement, ORPCError } from "@orpc/server";
 import { serviceContract } from "@/modules/services/service.contract";
 import * as schema from "@repo/database/db/schema";
-import type { ContextWithUser, InitialContext } from "@/types/index";
+import type { ContextWithUser, InitialContext, User } from "@/types/index";
 import { authMiddleware } from "@/middlewares/auth.middleware";
 import { fetchServiceFromDB } from "@/helpers/fetch-services.from-db";
 import { generateTokenFromSecret } from "@/helpers/generate-token-from-secret";
+import type { Redis } from "@upstash/redis";
+import { isDatabaseError } from "@/helpers/is-db-error";
 
 const os = implement(serviceContract).$context<ContextWithUser>();
+
+type Service = {
+    label: string;
+    secret: string;
+    id: string;
+    createdAt: Date;
+};
+
+async function insertDataInRedis(
+    redis: Redis,
+    service: Service,
+    userId: string,
+) {
+    await redis.rpush(`services-user-${userId}`, JSON.stringify(service));
+    await redis.expire(`services-user-${userId}`, 900);
+}
 
 export const serviceRouter = implement(serviceContract)
     .$context<InitialContext>()
@@ -23,16 +41,21 @@ export const serviceRouter = implement(serviceContract)
                     .values(data)
                     .returning();
 
-                await redis.set(
-                    `service-${service?.id}`,
-                    JSON.stringify(service),
-                );
+                if (!service)
+                    throw new ORPCError("UNPROCESSABLE_CONTENT", {
+                        message: "Failed to create service",
+                    });
 
-                return Response.json({
-                    success: true,
-                    message: "Service created",
-                });
+                await insertDataInRedis(redis, service, userId);
+
+                return { message: "Service created successfully" };
             } catch (error) {
+                if (isDatabaseError(error) && error.cause.code === "23505") {
+                    throw new ORPCError("CONFLICT", {
+                        message: "Service already exists.",
+                    });
+                }
+
                 throw new ORPCError("INTERNAL_SERVER_ERROR", {
                     message: "Service creation failed",
                 });
@@ -43,46 +66,40 @@ export const serviceRouter = implement(serviceContract)
             try {
                 const { user, redis, db } = context;
 
-                const is_record_present = await redis.keys("service-*");
+                const servicesLength = await redis.llen("services");
 
-                if (!is_record_present.length) {
+                if (!servicesLength) {
                     console.log("redis database is empty");
 
                     const services = await fetchServiceFromDB(user.id, db);
 
-                    console.log("services", services);
-
-                    services.map(
-                        async (service) =>
-                            await redis.set(
-                                `service-${service.id}`,
-                                JSON.stringify(service),
-                            ),
-                    );
-
-                    const record = services.map((res) => {
-                        const token = generateTokenFromSecret(res.secret);
+                    const record = services.map(async (service) => {
+                        await insertDataInRedis(redis, service, user.id);
+                        const token = generateTokenFromSecret(service.secret);
                         return {
-                            label: res.label,
+                            label: service.label,
                             token,
-                            id: res.id,
+                            id: service.id,
                         };
                     });
 
-                    return record;
+                    return await Promise.all(record);
                 }
 
-                const response = is_record_present.map(async (key) => {
-                    const record = await redis.get(key);
-                    return record;
-                }) as Promise<{
+                const redisServices = (await redis.lrange(
+                    `services-user-${user.id}`,
+                    0,
+                    -1,
+                )) as Promise<{
                     label: string;
                     secret: string;
                     id: string;
                     created_at: string;
                 }>[];
 
-                const resolvedResponse = await Promise.all(response);
+                const resolvedResponse = await Promise.all(redisServices);
+
+                console.log("resolvedResponse", resolvedResponse);
 
                 const record = resolvedResponse.map((res) => {
                     const token = generateTokenFromSecret(res.secret);
@@ -96,8 +113,6 @@ export const serviceRouter = implement(serviceContract)
 
                 return record;
             } catch (error) {
-                console.log("failed to list", error);
-
                 throw new ORPCError("INTERNAL_SERVER_ERROR", {
                     message: "Failed to list services.",
                 });

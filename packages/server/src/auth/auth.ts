@@ -13,6 +13,7 @@ type TAuth = {
 export const _auth = (env: Env): TAuth => {
     const sql = neon(env.POSTGRES_URL);
     const db = drizzle(sql, { schema });
+
     return {
         auth: betterAuth({
             database: drizzleAdapter(db, { provider: "pg", schema }),
@@ -36,7 +37,6 @@ export const _auth = (env: Env): TAuth => {
                 enabled: true,
             },
         }),
-
         db,
     };
 };

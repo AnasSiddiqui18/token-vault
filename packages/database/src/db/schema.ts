@@ -6,6 +6,9 @@ import {
     boolean,
     varchar,
     uuid,
+    unique,
+    uniqueIndex,
+    index,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -71,7 +74,7 @@ export const service = pgTable("service", {
     id: text("id")
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
-    label: text("label").notNull(),
+    label: text("label").notNull().unique(),
     secret: varchar({ length: 255 }).notNull(),
     userId: text("user_id")
         .notNull()
@@ -83,6 +86,7 @@ export const service = pgTable("service", {
         .notNull(),
     updatedAt: timestamp("updated_at")
         .$defaultFn(() => new Date())
+
         .notNull(),
 });
 

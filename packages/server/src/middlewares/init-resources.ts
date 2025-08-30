@@ -12,8 +12,13 @@ export const initResources = os
         req: Request;
     }>()
     .middleware(async ({ context, next }) => {
-        const { env } = context;
-        const redis = createRedis(env);
-        const { auth, db } = _auth(env);
-        return next({ context: { ...context, redis, db, auth } });
+        try {
+            const { env } = context;
+            const redis = createRedis(env);
+            const { auth, db } = _auth(env);
+            return next({ context: { ...context, db, auth, redis } });
+        } catch (error) {
+            console.log("initing resources failed", error);
+            throw error;
+        }
     });
