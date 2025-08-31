@@ -19,7 +19,14 @@ export default function App() {
                 <Route path="/sign-in" element={<SignIn />} />
                 <Route path="/sign-up" element={<SignUp />} />
             </Routes>
-            <Toaster richColors />
+            <Toaster
+                richColors
+                toastOptions={{
+                    style: {
+                        fontSize: "13px",
+                    },
+                }}
+            />
         </div>
     );
 }

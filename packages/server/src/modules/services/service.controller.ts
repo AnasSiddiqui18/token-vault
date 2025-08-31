@@ -66,7 +66,9 @@ export const serviceRouter = implement(serviceContract)
             try {
                 const { user, redis, db } = context;
 
-                const servicesLength = await redis.llen("services");
+                const servicesLength = await redis.llen(
+                    `services-user-${user.id}`,
+                );
 
                 if (!servicesLength) {
                     console.log("redis database is empty");
@@ -98,8 +100,6 @@ export const serviceRouter = implement(serviceContract)
                 }>[];
 
                 const resolvedResponse = await Promise.all(redisServices);
-
-                console.log("resolvedResponse", resolvedResponse);
 
                 const record = resolvedResponse.map((res) => {
                     const token = generateTokenFromSecret(res.secret);

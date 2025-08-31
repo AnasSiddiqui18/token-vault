@@ -116,9 +116,16 @@ export function AddServiceDialog() {
         onSuccess: () => {
             setIsServiceDialogOpen(false);
             form.reset();
+            toast.success("Service created");
             cache.invalidateQueries({ queryKey: ["list_services"] });
         },
     });
+
+    useEffect(() => {
+        if (!error) return;
+        toast.error(error.message ?? "Service creation failed");
+        setIsServiceDialogOpen(false);
+    }, [error]);
 
     useEffect(() => {
         if (
