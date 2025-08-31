@@ -11,7 +11,6 @@ export type Env = {
     UPSTASH_REDIS_REST_URL: string;
     UPSTASH_REDIS_REST_TOKEN: string;
     POSTGRES_URL: string;
-    BETTER_AUTH_SECRET: string;
 };
 
 export type db = NeonHttpDatabase<typeof schema> & {

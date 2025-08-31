@@ -1,11 +1,11 @@
 import { implement, ORPCError } from "@orpc/server";
 import { serviceContract } from "@/modules/services/service.contract";
 import * as schema from "@repo/database/db/schema";
-import type { ContextWithUser, InitialContext, User } from "@/types/index";
+import type { ContextWithUser, InitialContext } from "@/types/index";
 import { authMiddleware } from "@/middlewares/auth.middleware";
 import { fetchServiceFromDB } from "@/helpers/fetch-services.from-db";
 import { generateTokenFromSecret } from "@/helpers/generate-token-from-secret";
-import type { Redis } from "@upstash/redis";
+import type { Redis } from "@upstash/redis/cloudflare";
 import { isDatabaseError } from "@/helpers/is-db-error";
 
 const os = implement(serviceContract).$context<ContextWithUser>();

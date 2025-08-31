@@ -7,7 +7,7 @@ interface CircularTimerProps {
     duration?: number;
     size?: number;
     enable: boolean;
-    refetch?: (
+    refetch: (
         options?: RefetchOptions,
     ) => Promise<
         QueryObserverResult<
@@ -54,7 +54,7 @@ export default function CircularTimer({
     useEffect(() => {
         if (!startFetching) return;
         if (timeLeft === duration) {
-            // refetch();
+            refetch();
             console.log("30 seconds passed, fetching new records.");
         }
     }, [duration, timeLeft, startFetching]);

@@ -5,8 +5,10 @@ import type { ContractRouterClient } from "@orpc/contract";
 import { createORPCClient } from "@orpc/client";
 import { createORPCReactQueryUtils } from "@orpc/react-query";
 
+if (!import.meta.env.WXT_SERVER_URL) throw new Error("server url not found");
+
 const link = new OpenAPILink(contract, {
-    url: "http://127.0.0.1:8787/api",
+    url: `${import.meta.env.WXT_SERVER_URL}/api`,
     fetch: (request, init) => {
         return globalThis.fetch(request, {
             ...init,

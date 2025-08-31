@@ -3,15 +3,11 @@ import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { Hono } from "hono";
 import { ORPCError } from "@orpc/client";
 import { _auth } from "./auth/auth";
-import type { Env, Session, User } from "./types/index";
+import type { Env } from "./types/index";
 import { cors } from "hono/cors";
 
 const app = new Hono<{
     Bindings: Env;
-    Variables: {
-        user: User | null;
-        session: Session | null;
-    };
 }>();
 
 const handler = new OpenAPIHandler(router);
@@ -19,29 +15,28 @@ const handler = new OpenAPIHandler(router);
 app.use(
     "*",
     cors({
-        origin: "chrome-extension://pndhdgalmfifjidaboddbjepcjkmmaea",
+        origin: "chrome-extension://hifbciaadeigecbnkndkhcfhkpfjiaco",
         allowHeaders: ["Content-Type", "Authorization"],
-        allowMethods: ["POST", "GET", "OPTIONS"],
-        exposeHeaders: ["Content-Length"],
-        maxAge: 600,
+        allowMethods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
         credentials: true,
     }),
 );
 
-app.on(["POST", "GET"], "/api/auth/*", (c) => {
+app.on(["POST", "GET"], "/api/auth/*", async (c) => {
+    console.log("auth runs");
+
     const { auth } = _auth(c.env);
-    return auth.handler(c.req.raw);
+    const auth_res = await auth.handler(c.req.raw);
+    return auth_res;
 });
 
 app.get("/", (c) => {
     return c.json({ status: "Server is working" });
 });
 
-try {
-    await fetch("https://youtube.com");
-} catch (error) {}
-
 app.use("/api/*", async (c) => {
+    console.log("handler runs");
+
     const { response } = await handler.handle(c.req.raw, {
         prefix: "/api",
         context: {
