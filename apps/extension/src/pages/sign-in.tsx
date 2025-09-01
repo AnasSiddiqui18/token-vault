@@ -18,6 +18,7 @@ import { authClient } from "@/lib/auth-client";
 
 export default function SignIn() {
     const navigate = useNavigate();
+    const { data } = authClient.useSession();
 
     const loginSchema = signin_schema;
 
@@ -42,6 +43,7 @@ export default function SignIn() {
             });
 
             if (response.error) throw new Error(response.error.message);
+
             return response.data;
         },
 

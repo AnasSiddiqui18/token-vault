@@ -7,7 +7,7 @@ import { TanstackWrapper } from "@/tanstack/Tanstack-wrapper.tsx";
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <TanstackWrapper>
-            <MemoryRouter initialEntries={["/sign-up", "/dashboard"]}>
+            <MemoryRouter initialEntries={["/sign-in", "/dashboard"]}>
                 <App />
             </MemoryRouter>
         </TanstackWrapper>
