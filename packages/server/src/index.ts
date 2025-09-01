@@ -23,8 +23,6 @@ app.use(
 );
 
 app.on(["POST", "GET"], "/api/auth/*", async (c) => {
-    console.log("auth runs");
-
     const { auth } = _auth(c.env);
     const auth_res = await auth.handler(c.req.raw);
     return auth_res;
@@ -35,8 +33,6 @@ app.get("/", (c) => {
 });
 
 app.use("/api/*", async (c) => {
-    console.log("handler runs");
-
     const { response } = await handler.handle(c.req.raw, {
         prefix: "/api",
         context: {

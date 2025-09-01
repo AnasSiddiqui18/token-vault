@@ -47,12 +47,8 @@ export function AddServiceDialog() {
     const [isServiceDialogOpen, setIsServiceDialogOpen] = useState(false);
 
     const schema = z.object({
-        label: z.string().min(3, {
-            message: "Atleast enter 3 characters.",
-        }),
-        qr_photo: z.instanceof(File, {
-            message: "Qr photo is required",
-        }),
+        label: z.string().min(3, { message: "Atleast enter 3 characters." }),
+        qr_photo: z.instanceof(File, { message: "Qr photo is required" }),
     });
 
     const form = useForm({

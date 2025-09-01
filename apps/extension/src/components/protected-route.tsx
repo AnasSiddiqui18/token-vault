@@ -1,20 +1,7 @@
+import { authClient } from "@/lib/auth-client";
 import { Navigate, Outlet } from "react-router";
 
 export function ProtectedRoute() {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(
-        null,
-    );
-
-    useEffect(() => {
-        async function isUserAuthenticated() {
-            const token = await storage.getItem("session:token");
-            setIsAuthenticated(!!token);
-        }
-
-        isUserAuthenticated();
-    }, []);
-
-    if (isAuthenticated === null) return;
-
-    return !isAuthenticated ? <Navigate to="/sign-in" /> : <Outlet />;
+    const { error, data } = authClient.useSession();
+    return error || !data?.session ? <Navigate to="/sign-in" /> : <Outlet />;
 }

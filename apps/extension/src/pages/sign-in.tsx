@@ -14,7 +14,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { signin_schema } from "@/schema/schema";
-import { storage } from "@wxt-dev/storage";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignIn() {
@@ -48,7 +47,6 @@ export default function SignIn() {
 
         onSuccess: async (res) => {
             if (!res) return;
-            storage.setItem("session:token", res.token);
             navigate("/dashboard");
         },
     });
