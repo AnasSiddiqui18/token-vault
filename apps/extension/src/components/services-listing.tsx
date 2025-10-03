@@ -1,8 +1,9 @@
 import { orpcQueryClient } from "@/orpc/orpc";
 import { useQuery } from "@tanstack/react-query";
-import { File, LoaderCircle } from "lucide-react";
+import { File } from "lucide-react";
 import { ServiceCard } from "./service-card";
 import CircularTimer from "./circular-timer";
+import { Spinner } from "@heroui/react";
 
 export function ServiceListing() {
     const {
@@ -30,7 +31,7 @@ export function ServiceListing() {
 
             {isPending ? (
                 <div className="flex flex-col items-center space-y-4 py-10">
-                    <LoaderCircle className="size-8 text-primary animate-spin" />
+                    <Spinner size="md" />
                     <span className="text-muted-foreground">
                         Loading services...
                     </span>

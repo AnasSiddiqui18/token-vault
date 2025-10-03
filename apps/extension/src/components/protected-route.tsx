@@ -1,7 +1,7 @@
-import { LoaderCircle } from "lucide-react";
 import { Navigate, Outlet, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { orpcQueryClient } from "@/orpc/orpc";
+import { Spinner } from "@heroui/react";
 
 export function ProtectedRoute() {
     const navigate = useNavigate();
@@ -21,9 +21,9 @@ export function ProtectedRoute() {
     if (isPending)
         return (
             <div className="h-full w-full flex flex-col justify-center rounded-lg shadow-md border text-muted-foreground bg-background p-6 items-center space-y-4">
-                <LoaderCircle className="size-8 text-primary animate-spin" />
+                <Spinner size="md" />
                 <span className="text-muted-foreground">
-                    Preparing Dashboard...
+                    Fetching session...
                 </span>
             </div>
         );

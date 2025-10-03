@@ -3,6 +3,7 @@ import fluid, { screens } from "fluid-tailwind";
 
 export default {
     darkMode: ["class"],
+
     theme: {
         extend: {
             colors: {

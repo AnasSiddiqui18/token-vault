@@ -15,10 +15,10 @@ import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { signin_schema } from "@/schema/schema";
 import { authClient } from "@/lib/auth-client";
+import { Spinner } from "@heroui/react";
 
 export default function SignIn() {
     const navigate = useNavigate();
-    const { data } = authClient.useSession();
 
     const loginSchema = signin_schema;
 
