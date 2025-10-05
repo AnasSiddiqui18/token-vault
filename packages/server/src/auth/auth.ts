@@ -30,7 +30,9 @@ export const _auth = (env: Env): TAuth => {
                     },
                 },
             },
-            trustedOrigins: ["chrome-extension://lilahgfkjcoaelbmhfmlakcfmdlmhaap"],
+            trustedOrigins: [
+                "chrome-extension://lilahgfkjcoaelbmhfmlakcfmdlmhaap",
+            ],
             emailAndPassword: {
                 enabled: true,
             },

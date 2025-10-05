@@ -15,10 +15,10 @@ import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { signin_schema } from "@/schema/schema";
 import { authClient } from "@/lib/auth-client";
-import { Spinner } from "@heroui/react";
 
 export default function SignIn() {
     const navigate = useNavigate();
+    const [error, setError] = useState("");
 
     const loginSchema = signin_schema;
 
@@ -30,11 +30,7 @@ export default function SignIn() {
         },
     });
 
-    const {
-        isPending: isUserLoggingIn,
-        mutate,
-        error,
-    } = useMutation({
+    const { isPending: isUserLoggingIn, mutate } = useMutation({
         mutationKey: ["login_user"],
         mutationFn: async (e: (typeof loginSchema)["_input"]) => {
             const response = await authClient.signIn.email({
@@ -42,8 +38,8 @@ export default function SignIn() {
                 password: e.password,
             });
 
-            if (response.error) throw new Error(response.error.message);
-
+            if (response.error)
+                return setError(response.error.message ?? "Login failed");
             return response.data;
         },
 
@@ -122,7 +118,7 @@ export default function SignIn() {
 
                         {error && (
                             <div className="bg-red-500/10 text-red-600 text-sm rounded-md px-4 py-2 mt-2 text-center">
-                                {error.message}
+                                {error}
                             </div>
                         )}
 

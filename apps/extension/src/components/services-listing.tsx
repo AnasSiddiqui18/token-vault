@@ -1,14 +1,14 @@
 import { orpcQueryClient } from "@/orpc/orpc";
-import { useQuery } from "@tanstack/react-query";
 import { File } from "lucide-react";
 import { ServiceCard } from "./service-card";
 import CircularTimer from "./circular-timer";
 import { Spinner } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 
 export function ServiceListing() {
     const {
         data: services,
-        isPending,
+        isFetching: isFetchingServices,
         error,
         refetch,
     } = useQuery(
@@ -29,7 +29,7 @@ export function ServiceListing() {
                 />
             </div>
 
-            {isPending ? (
+            {isFetchingServices ? (
                 <div className="flex flex-col items-center space-y-4 py-10">
                     <Spinner size="md" />
                     <span className="text-muted-foreground">
@@ -43,8 +43,8 @@ export function ServiceListing() {
                         {error.message || "Something went wrong"}
                     </span>
                 </div>
-            ) : services.length > 0 ? (
-                services.map((service) => (
+            ) : Array.isArray(services) && services.length > 0 ? (
+                services?.map((service) => (
                     <div className="space-y-5" key={service.id}>
                         <ServiceCard data={service} />
                     </div>

@@ -84,22 +84,13 @@ export function AddServiceDialog() {
         mutationFn: async (values: (typeof schema)["_input"]) => {
             const { data, error } = await getSession();
 
-            if (error || !data) {
-                toast.error("Session not found");
-                return;
-            }
+            if (error || !data) throw new Error("Session not found");
 
-            if (!("user" in data)) {
-                toast.error("User info not found");
-                return;
-            }
+            if (!("user" in data)) throw new Error("User info not found");
 
             const secret = await extractSecretFromImage(values.qr_photo);
 
-            if (!secret) {
-                toast.error("Failed to fetch secret");
-                return;
-            }
+            if (!secret) throw new Error("No secret found in image");
 
             const response = await orpcClient.service.create({
                 label: values.label,

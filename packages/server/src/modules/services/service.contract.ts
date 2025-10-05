@@ -24,7 +24,7 @@ export const createService = oc
 
 export const listServices = oc
     .route({
-        path: "/service/list-service",
+        path: "/service/list-services",
         method: "GET",
     })
     .output(serviceOutputSchema);

@@ -3,7 +3,7 @@ import { oc } from "@orpc/contract";
 
 export const getCurrentSession = oc
     .route({
-        path: "/user/get-current-user",
+        path: "/user/get-current-session",
         method: "GET",
     })
     .output(

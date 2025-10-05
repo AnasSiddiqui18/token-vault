@@ -18,6 +18,7 @@ import { toast } from "sonner";
 
 export default function SignUp() {
     const navigate = useNavigate();
+    const [error, setError] = useState("");
     const { signUp } = authClient;
 
     const form = useForm({
@@ -29,19 +30,17 @@ export default function SignUp() {
         },
     });
 
-    const {
-        isPending: isCreatingUser,
-        mutate,
-        error,
-    } = useMutation({
+    const { isPending: isCreatingUser, mutate } = useMutation({
         mutationKey: ["create_user"],
         mutationFn: async (values: (typeof signup_schema)["_input"]) => {
             const response = await signUp.email({
                 ...values,
             });
 
-            if (response.error) throw new Error(response.error.message);
-            toast.success("Success");
+            if (response.error)
+                return setError(response.error.message ?? "Signup failed");
+
+            toast.success("Signup successfully");
         },
 
         onSuccess: () => {
@@ -137,7 +136,7 @@ export default function SignUp() {
 
                         {error && (
                             <div className="bg-red-500/10 text-red-600 text-sm rounded-md px-4 py-2 mt-2 text-center">
-                                {error.message}
+                                {error}
                             </div>
                         )}
 

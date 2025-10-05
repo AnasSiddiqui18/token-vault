@@ -5,14 +5,8 @@ import { storage } from "@wxt-dev/storage";
 import { useNavigate } from "react-router";
 
 export function Dashboard() {
-    const { signOut, useSession } = authClient;
+    const { signOut } = authClient;
     const navigate = useNavigate();
-    const { data, error } = useSession();
-
-    useEffect(() => {
-        if (error) return console.log("session error", error);
-        console.log("session", data);
-    }, [data, error]);
 
     return (
         <div className="bg-background h-full text-muted-foreground rounded-lg p-4 overflow-hidden">
