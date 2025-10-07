@@ -2,71 +2,48 @@ import { onMessage, sendMessage } from "../messaging";
 
 let targetEl: HTMLInputElement | null = null;
 
+function isOTPField(input: HTMLInputElement) {
+    const hint = (
+        input.name +
+        input.id +
+        input.placeholder +
+        input.getAttribute("aria-label")
+    ).toLowerCase();
+    
+    return (
+        hint.includes("otp") ||
+        hint.includes("mfa") ||
+        hint.includes("twofactor")
+    );
+}
+
 export default defineContentScript({
-    matches: ["https://*.signin.aws.amazon.com/*"],
+    matches: ["<all_urls>"],
     main() {
-        console.log("Content script runs");
+        console.log("Content scripsdt runs");
 
-        const observer = new MutationObserver((mutationList) => {
-            for (const mutation of mutationList) {
-                if (mutation.type === "childList") {
-                    const addedNodes = mutation.addedNodes;
+        const observer = new MutationObserver(() => {
+            // prettier-ignore
 
-                    const possibleSelectors = [
-                        'input[name="mfaCode"]',
-                        'input[name="totp"]',
-                        'input[name="one-time-code"]',
-                    ];
+            const target = document.querySelectorAll('input')
 
-                    addedNodes.forEach((node) => {
-                        if (node instanceof HTMLElement) {
-                            if (
-                                node instanceof HTMLInputElement &&
-                                possibleSelectors.includes(
-                                    `input[name=${node.name}]`,
-                                )
-                            ) {
-                                console.log("input found", node);
-                                targetEl = node;
-                                observer.disconnect();
-                            } else {
-                                for (const selector of possibleSelectors) {
-                                    const target = node.querySelector(
-                                        selector,
-                                    ) as HTMLInputElement;
-
-                                    if (target) {
-                                        const url = window.location.href
-                                            .split("?")
-                                            .at(0);
-
-                                        if (!url)
-                                            return console.error(
-                                                "Url not found",
-                                            );
-
-                                        sendMessage("get_service_token", {
-                                            domain: url,
-                                        });
-
-                                        targetEl = target;
-                                        observer.disconnect();
-                                        return;
-                                    }
-
-                                    return null;
-                                }
-                            }
-                        }
-                    });
-                }
+            if (target.length) {
+                target.forEach((input) => {
+                    const isMfaInput = isOTPField(input);
+                    if (isMfaInput) {
+                        console.log("target found", input);
+                        const url = window.location.href.split("?").at(0);
+                        if (!url) return console.error("Url not found");
+                        sendMessage("get_service_token", { domain: url });
+                        targetEl = input;
+                        observer.disconnect();
+                        return;
+                    }
+                });
             }
         });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-        });
+        observer.observe(document.body, { childList: true, subtree: true });
 
         onMessage("service_token_response", ({ data }) => {
             const { token } = data;
