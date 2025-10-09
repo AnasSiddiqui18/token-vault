@@ -9,7 +9,7 @@ function isOTPField(input: HTMLInputElement) {
         input.placeholder +
         input.getAttribute("aria-label")
     ).toLowerCase();
-    
+
     return (
         hint.includes("otp") ||
         hint.includes("mfa") ||
@@ -20,7 +20,7 @@ function isOTPField(input: HTMLInputElement) {
 export default defineContentScript({
     matches: ["<all_urls>"],
     main() {
-        console.log("Content scripsdt runs");
+        console.log("Content script runs");
 
         const observer = new MutationObserver(() => {
             // prettier-ignore
@@ -51,6 +51,7 @@ export default defineContentScript({
             targetEl.value = token;
             targetEl.dispatchEvent(new Event("input", { bubbles: true }));
             targetEl.dispatchEvent(new Event("change", { bubbles: true }));
+            targetEl.form?.requestSubmit();
         });
     },
 });

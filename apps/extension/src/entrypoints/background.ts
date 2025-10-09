@@ -32,10 +32,8 @@ export default defineBackground(() => {
             return;
         }
 
-        sendMessage(
-            "service_token_response",
-            { ...serviceRes },
-            { tabId: (sender.tab as any).id },
-        );
+        sendMessage("service_token_response", serviceRes, {
+            tabId: (sender.tab as any).id,
+        });
     });
 });
