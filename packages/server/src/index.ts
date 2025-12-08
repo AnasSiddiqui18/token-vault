@@ -15,9 +15,9 @@ const handler = new OpenAPIHandler(router);
 app.use(
     "*",
     cors({
-        origin: "chrome-extension://lilahgfkjcoaelbmhfmlakcfmdlmhaap",
+        origin: "*",
         allowHeaders: ["Content-Type", "Authorization"],
-        allowMethods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
+        allowMethods: ["*"],
         credentials: true,
     }),
 );
