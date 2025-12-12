@@ -23,14 +23,15 @@ export default defineBackground(() => {
         const services = await fetchServices();
         const url = new URL(data.domain).hostname;
         const serviceRes = services.find((service) =>
-            url.includes(service.label),
+            url.includes(service.label.toLowerCase()),
         );
-        console.log("service found successfully 🎉", serviceRes);
 
         if (!serviceRes) {
-            console.error("Failed to fetch service on the base of url");
+            console.error("Failed to fetch service", url);
             return;
         }
+
+        console.log("service found successfully 🎉", serviceRes);
 
         sendMessage("service_token_response", serviceRes, {
             tabId: (sender.tab as any).id,
